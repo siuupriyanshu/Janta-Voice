@@ -1,0 +1,194 @@
+{
+  "address": "AxR7Xwhi2MkBUMDZweEd7pVozPcYCwPzviou7WGGhWJk",
+  "metadata": {
+    "name": "janta_voice",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "submit_report",
+      "docs": [
+        "File an immutable civic complaint record on-chain.",
+        "`summary_hash` is the SHA-256 of the full off-chain summary and also",
+        "forms part of the PDA seed, enforcing one record per wallet per report."
+      ],
+      "discriminator": [
+        27,
+        178,
+        64,
+        9,
+        20,
+        46,
+        250,
+        14
+      ],
+      "accounts": [
+        {
+          "name": "reporter",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "report",
+          "docs": [
+            "One record per (wallet, summary_hash). If this PDA already exists the",
+            "`init` constraint fails — that failure IS the v1 anti-spam behavior",
+            "(a wallet cannot file the identical report twice)."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  112,
+                  111,
+                  114,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "reporter"
+              },
+              {
+                "kind": "arg",
+                "path": "summary_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "name": "summary_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ReportRecord",
+      "discriminator": [
+        22,
+        45,
+        97,
+        27,
+        107,
+        124,
+        93,
+        170
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "CategoryEmpty",
+      "msg": "Category must not be empty"
+    },
+    {
+      "code": 6001,
+      "name": "CategoryTooLong",
+      "msg": "Category exceeds the maximum allowed length"
+    },
+    {
+      "code": 6002,
+      "name": "LocationEmpty",
+      "msg": "Location must not be empty"
+    },
+    {
+      "code": 6003,
+      "name": "LocationTooLong",
+      "msg": "Location exceeds the maximum allowed length"
+    }
+  ],
+  "types": [
+    {
+      "name": "ReportRecord",
+      "docs": [
+        "An immutable civic complaint record, one PDA per (wallet, summary_hash).",
+        "",
+        "Only the summary *hash* lives on-chain (integrity + cost); the full",
+        "AI-generated summary text is stored off-chain against this hash."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "reporter",
+            "docs": [
+              "The wallet that filed this report."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "category",
+            "docs": [
+              "Closed-set classification: road, water, electricity, corruption, other."
+            ],
+            "type": "string"
+          },
+          {
+            "name": "location",
+            "docs": [
+              "Free-text location (e.g. ward / municipality name)."
+            ],
+            "type": "string"
+          },
+          {
+            "name": "summary_hash",
+            "docs": [
+              "Hash of the full off-chain summary (SHA-256)."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "timestamp",
+            "docs": [
+              "Unix timestamp when the record was committed on-chain."
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": [
+    {
+      "name": "REPORT_SEED",
+      "docs": [
+        "PDA seed prefix for a citizen's civic report record."
+      ],
+      "type": "bytes",
+      "value": "[114, 101, 112, 111, 114, 116]"
+    }
+  ]
+}
