@@ -10,6 +10,7 @@ import {
 } from "./config.js";
 import { db, type StoredReport } from "./db.js";
 import { PROGRAM_ID, sha256, buildSubmitReportTx } from "./solana.js";
+import { runChat } from "./agent.js";
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,26 @@ app.use(express.json());
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true, cluster: CLUSTER, programId: PROGRAM_ID.toBase58() });
+});
+
+/**
+ * POST /api/chat
+ * Body: { messages: [{role, content}...], reporter? }
+ * Runs the tool-calling agent. When it files a report and a wallet is connected,
+ * the response includes `pendingTransaction` (an unsigned tx) for the wallet to sign.
+ */
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { messages, reporter } = req.body ?? {};
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "messages (non-empty array) is required" });
+    }
+    const result = await runChat(messages, typeof reporter === "string" ? reporter : undefined);
+    return res.json(result);
+  } catch (err) {
+    console.error("chat error:", err);
+    return res.status(500).json({ error: (err as Error)?.message ?? "internal error" });
+  }
 });
 
 /**
