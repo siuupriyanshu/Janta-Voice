@@ -7,10 +7,10 @@ import {
   CATEGORIES,
   MAX_CATEGORY_LEN,
   MAX_LOCATION_LEN,
-} from "./config.js";
-import { db, type StoredReport } from "./db.js";
-import { PROGRAM_ID, sha256, buildSubmitReportTx } from "./solana.js";
-import { runChat } from "./agent.js";
+} from "./config";
+import { db, type StoredReport } from "./db";
+import { PROGRAM_ID, sha256, buildSubmitReportTx } from "./solana";
+import { runChat } from "./agent";
 
 const app = express();
 app.use(cors());
@@ -137,8 +137,13 @@ app.get("/api/reports/:hash", (req, res) => {
   return res.json(report);
 });
 
-app.listen(PORT, () => {
-  console.log(
-    `Janta Voice backend listening on :${PORT} (${CLUSTER}, program ${PROGRAM_ID.toBase58()})`,
-  );
-});
+// Only run a long-lived listener when NOT on serverless (Vercel imports `app`).
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(
+      `Janta Voice backend listening on :${PORT} (${CLUSTER}, program ${PROGRAM_ID.toBase58()})`,
+    );
+  });
+}
+
+export default app;

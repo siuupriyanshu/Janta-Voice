@@ -1,9 +1,13 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import seed from "../seed.json";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH = join(__dirname, "..", "data", "reports.json");
+
+// On serverless (Vercel) only /tmp is writable; locally use ./data.
+const DATA_DIR = process.env.VERCEL ? "/tmp" : join(__dirname, "..", "data");
+const DB_PATH = join(DATA_DIR, "reports.json");
 
 /**
  * A civic report. The full `summary` text lives here off-chain; only its
@@ -21,7 +25,10 @@ export interface StoredReport {
   createdAt: number; // ms epoch (server-side, when the tx was built)
 }
 
-function load(): Record<string, StoredReport> {
+// Bundled demo seed — always available (read-only), even on ephemeral hosts.
+const SEED = seed as Record<string, StoredReport>;
+
+function loadMutable(): Record<string, StoredReport> {
   if (!existsSync(DB_PATH)) return {};
   try {
     return JSON.parse(readFileSync(DB_PATH, "utf8")) as Record<string, StoredReport>;
@@ -30,9 +37,19 @@ function load(): Record<string, StoredReport> {
   }
 }
 
-function persist(data: Record<string, StoredReport>): void {
-  mkdirSync(dirname(DB_PATH), { recursive: true });
-  writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+// Seed first, then the mutable store overrides/extends it.
+function load(): Record<string, StoredReport> {
+  return { ...SEED, ...loadMutable() };
+}
+
+function persist(mutable: Record<string, StoredReport>): void {
+  try {
+    mkdirSync(DATA_DIR, { recursive: true });
+    writeFileSync(DB_PATH, JSON.stringify(mutable, null, 2));
+  } catch (err) {
+    // Read-only FS (some serverless tiers) — keep serving from memory/seed.
+    console.warn("report store not persisted:", (err as Error)?.message);
+  }
 }
 
 export const db = {
@@ -43,19 +60,19 @@ export const db = {
     return load()[hash];
   },
   put(report: StoredReport): void {
-    const data = load();
+    const mutable = loadMutable();
     // Keep the first stored copy for a given hash (the on-chain record is
     // immutable anyway); never overwrite the original summary text.
-    if (!data[report.summaryHash]) {
-      data[report.summaryHash] = report;
-      persist(data);
+    if (!mutable[report.summaryHash] && !SEED[report.summaryHash]) {
+      mutable[report.summaryHash] = report;
+      persist(mutable);
     }
   },
   setSignature(hash: string, signature: string): void {
-    const data = load();
-    if (data[hash]) {
-      data[hash].signature = signature;
-      persist(data);
+    const mutable = loadMutable();
+    if (mutable[hash]) {
+      mutable[hash].signature = signature;
+      persist(mutable);
     }
   },
 };

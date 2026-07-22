@@ -7,9 +7,9 @@ import {
   OPENROUTER_API_KEY,
   OPENROUTER_BASE_URL,
   OPENROUTER_MODEL,
-} from "./config.js";
-import { db, type StoredReport } from "./db.js";
-import { PROGRAM_ID, sha256, buildSubmitReportTx } from "./solana.js";
+} from "./config";
+import { db, type StoredReport } from "./db";
+import { PROGRAM_ID, sha256, buildSubmitReportTx } from "./solana";
 
 // Lazy client so the backend still boots (and other routes work) when no key is set.
 let _client: OpenAI | null = null;

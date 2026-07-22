@@ -2,3 +2,5 @@ node_modules/
 data/
 .env
 dist/
+.vercel
+api/index.js

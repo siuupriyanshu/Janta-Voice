@@ -1,15 +1,9 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
 import { createHash } from "node:crypto";
 import { Connection, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
-import { RPC_URL } from "./config.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// The Anchor IDL (new format, includes `address`).
-const idl = JSON.parse(readFileSync(join(__dirname, "idl", "janta_voice.json"), "utf8"));
+import { RPC_URL } from "./config";
+// The Anchor IDL (new format, includes `address`). Imported so bundlers include it.
+import idl from "./idl/janta_voice.json";
 
 export const PROGRAM_ID = new PublicKey(idl.address);
 export const connection = new Connection(RPC_URL, "confirmed");

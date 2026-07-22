@@ -1,0 +1,32 @@
+{
+  "52f0b54a46951b139754697ecc7c06213d4b12a1884cb6562d01b27f09987385": {
+    "summaryHash": "52f0b54a46951b139754697ecc7c06213d4b12a1884cb6562d01b27f09987385",
+    "reporter": "FyrCfDx7tbQXNPYx8jK61CrC6YvXNVKDhxGsrpNxjHdN",
+    "category": "road",
+    "location": "Ward 5, Kathmandu",
+    "summary": "Large pothole on the main road near the school, unrepaired for weeks and causing accidents.",
+    "reportPda": "CwZnupf1Xm7ojSqKEyaRAYTgfsSSnEQ3fskZdKN6pQFA",
+    "signature": "2RUjJRk86d7B4vCJMBsVs8CVGVW3xHEuGSbNGEQH6Rk6pxKvvAgUt8kKccfG9RC5R9uZtnNapYoCmohbsx6enCKr",
+    "createdAt": 1784660312011
+  },
+  "0f208a9961a70baa0efc22af110ab31edda2065f8e520fc64d1bdf827ce2e708": {
+    "summaryHash": "0f208a9961a70baa0efc22af110ab31edda2065f8e520fc64d1bdf827ce2e708",
+    "reporter": "FyrCfDx7tbQXNPYx8jK61CrC6YvXNVKDhxGsrpNxjHdN",
+    "category": "water",
+    "location": "Ward 9, Lalitpur",
+    "summary": "No piped water supply for six days; residents relying on private tankers.",
+    "reportPda": "3EgquNDhkKFgmocPK4NQebAAd8yCpuGK6uPzaXZr4jff",
+    "signature": "4YKxHa5ayVqpBcTjKt2JfmCqD5iYsw1KJncbtbBhQPxnVfmdkCkmKrxoMmNEPE5RXVHUJbSaNwC98zXpYVFLFixj",
+    "createdAt": 1784660312835
+  },
+  "af32a492394569bed677b82ff56105192206a9292bbfe7da0c9def08f41c164c": {
+    "summaryHash": "af32a492394569bed677b82ff56105192206a9292bbfe7da0c9def08f41c164c",
+    "reporter": "FyrCfDx7tbQXNPYx8jK61CrC6YvXNVKDhxGsrpNxjHdN",
+    "category": "electricity",
+    "location": "Bharatpur-10",
+    "summary": "Frequent unscheduled evening power cuts for the past two weeks.",
+    "reportPda": "FivrmeKhDKvUukA91Jr5XNMgmoDSvEXFRsxjNaQUw69S",
+    "signature": "3ZXJQYx6WRJEZRG4JX8gYSi8mucjCuTZwTDaAYQXNKcomWh99tkb7Sff9BcpynYmoWKythd8JPv1PXbWjndLM5Qk",
+    "createdAt": 1784660313616
+  }
+}
